@@ -10,8 +10,9 @@ on:
 name: Build Code
 env:
   # the name of the repo
-  HOME_REPO: usnistgov/OSCAL
-  HOME_BRANCH: master
+  HOME_REPO: usnistgov/metaschema
+  HOME_BRANCH_RELEASE: main
+  HOME_BRANCH_DEVELOPMENT: develop
   # dependency versions
   SAXON_VERSION: 9.9.0-1
   HUGO_VERSION: 0.69.2
@@ -28,16 +29,16 @@ jobs:
     name: Produce Metaschema Artifacts
     runs-on: ubuntu-18.04
     steps:
-      # use this for main repo master builds
+      # use this for main repo builds
       - uses: actions/checkout@v2
-        if: ${{ github.repository == env.HOME_REPO && github.ref == format('refs/heads/{0}',env.HOME_BRANCH) }}
+        if: ${{ github.repository == env.HOME_REPO && (github.ref == format('refs/heads/{0}',env.HOME_BRANCH_RELEASE) || github.ref == format('refs/heads/{0}',env.HOME_BRANCH_DEVELOPMENT)) }}
         with:
           path: ${{ env.OSCAL_HOME }}
           submodules: recursive
           token: ${{ secrets.COMMIT_TOKEN }}
       # use this for pull request builds where checkout uses the builtin token
       - uses: actions/checkout@v2
-        if: ${{ github.repository != env.HOME_REPO || github.ref != format('refs/heads/{0}',env.HOME_BRANCH) }}
+        if: ${{ github.repository != env.HOME_REPO || (github.ref != format('refs/heads/{0}',env.HOME_BRANCH_RELEASE) && github.ref != format('refs/heads/{0}',env.HOME_BRANCH_DEVELOPMENT)) }}
         with:
           path: ${{ env.OSCAL_HOME }}
           submodules: recursive
@@ -68,3 +69,14 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-
+      - name: Build and Run Tests
+        run: |
+          mvn -Prelease verify
+      - name: Gathering JAR files
+        run: mkdir staging && cp target/*.jar staging
+      - name: Saving staging artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: staging
+      
