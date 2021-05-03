@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>18-SNAPSHOT</version>
+		<version>18</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -347,6 +347,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.2.0</version>
 					<configuration>
 						<!-- this is a hack to fix a javadoc bug -->
 						<detectJavaApiLink>false</detectJavaApiLink>
@@ -379,29 +380,29 @@
 							<licenseSet>
 								<header>license/nist/license.txt</header>
 								<includes>
-									<include>**/*.java</include>
+									<include>src/**/*.java</include>
 								</includes>
 							</licenseSet>
 						</licenseSets>
 						<failIfMissing>true</failIfMissing>
 					</configuration>
-					<executions>
-						<execution>
-							<id>check-license</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>gov.nist.secauto</groupId>
-							<artifactId>oss-build-support</artifactId>
-							<version>17</version>
-							<scope>compile</scope>
-						</dependency>
-					</dependencies>
+					<!-- <executions> -->
+					<!-- <execution> -->
+					<!-- <id>check-license</id> -->
+					<!-- <phase>verify</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>check</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
+					<!-- </executions> -->
+					<!-- <dependencies> -->
+					<!-- <dependency> -->
+					<!-- <groupId>gov.nist.secauto</groupId> -->
+					<!-- <artifactId>oss-build-support</artifactId> -->
+					<!-- <version>17</version> -->
+					<!-- <scope>compile</scope> -->
+					<!-- </dependency> -->
+					<!-- </dependencies> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -419,6 +420,15 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<modules>
